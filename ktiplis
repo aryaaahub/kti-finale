@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Healthy Society Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #e8f5e9;
+  margin: 0; padding: 0;
+  display: flex; flex-direction: column;
+  align-items: center;
+}
+.container {
+  background: white; 
+  max-width: 500px; 
+  padding: 20px; 
+  margin-top: 40px; 
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+button {
+  width: 100%;
+  margin: 6px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #43a047;
+  color: white;
+}
+button:hover { background: #2e7d32; }
+.score-box {
+  background: #c8e6c9; padding: 10px; border-radius: 8px;
+  margin-bottom: 10px; font-size: 18px; font-weight: bold;
+}
+.option-box { margin-bottom: 15px; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Healthy Society Builder</h2>
+  <div class="score-box">Kesehatan Masyarakat: <span id="score">50</span>/100</div>
+
+  <div id="question"></div>
+  <div id="options"></div>
+  <div id="explanation" class="hidden"></div>
+  <button id="nextBtn" class="hidden" onclick="nextQuestion()">Lanjut</button>
+</div>
+
+<script>
+let score = 50;
+let step = 0;
+
+const questions = [
+  {
+    text: "Desa jauh dari puskesmas, ibu hamil anemia. Apa kebijakanmu?",
+    options: [
+      { text: "🚐 Puskesmas keliling", points: +10, explain: 
+        "Ini faktor PERANTARA (akses layanan). Sesuai Teori Ekologi Sosial." },
+      { text: "👩‍⚕️ Latih kader posyandu", points: +8, explain: 
+        "Faktor perantara + dukungan sosial (Social Support Theory)." },
+      { text: "🛣 Perbaiki jalan", points: +6, explain: 
+        "Memperbaiki akses → determinasi struktural & perantara." }
+    ]
+  },
+  {
+    text: "Banyak remaja putus sekolah & mulai merokok.",
+    options: [
+      { text: "🎓 Program beasiswa", points: +10, explain:
+        "Faktor STRUKTURAL (pendidikan) → mencegah perilaku buruk (individual)." },
+      { text: "🚭 Kampanye anti-rokok", points: +6, explain:
+        "Faktor individual (perilaku) & sosial." },
+      { text: "🏀 Bikin kegiatan pemuda", points: +7, explain:
+        "Modal sosial Bourdieu: kegiatan positif mengurangi perilaku buruk." }
+    ]
+  },
+  {
+    text: "Banyak warga stres karena PHK.",
+    options: [
+      { text: "📦 Bantuan sosial", points: +9, explain:
+        "Faktor struktural + teori dukungan sosial Cobb." },
+      { text: "💼 Pelatihan kerja", points: +10, explain:
+        "Peningkatan modal ekonomi (Bourdieu) → kesehatan meningkat." },
+      { text: "🧘 Kelas manajemen stres", points: +7, explain:
+        "Teori Wilkinson & Marmot: kurangi stres sosial." }
+    ]
+  }
+];
+
+function loadQuestion() {
+  const q = questions[step];
+  document.getElementById("question").innerHTML = `<h3>${q.text}</h3>`;
+  let opts = "";
+  q.options.forEach((opt, i) => {
+    opts += `<div class="option-box"><button onclick="choose(${i})">${opt.text}</button></div>`;
+  });
+  document.getElementById("options").innerHTML = opts;
+}
+
+function choose(i) {
+  const q = questions[step];
+  score += q.options[i].points;
+  document.getElementById("score").innerText = score;
+
+  document.getElementById("explanation").classList.remove("hidden");
+  document.getElementById("explanation").innerHTML = `
+    ✅ <b>Penjelasan:</b> ${q.options[i].explain}
+  `;
+
+  document.getElementById("options").innerHTML = "";
+  document.getElementById("nextBtn").classList.remove("hidden");
+}
+
+function nextQuestion() {
+  step++;
+  document.getElementById("explanation").classList.add("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+  
+  if (step >= questions.length) {
+    endGame();
+  } else {
+    loadQuestion();
+  }
+}
+
+function endGame() {
+  document.getElementById("question").innerHTML = `<h3>🎉 Game Selesai!</h3>`;
+  document.getElementById("options").innerHTML = "";
+  let message = (score >= 75) 
+    ? "🌟 Kamu sukses membangun masyarakat sehat!" 
+    : "⚠️ Perlu lebih banyak kebijakan sosial yang kuat!";
+  document.getElementById("explanation").innerHTML = `<b>${message}</b><br>Skor akhir: ${score}`;
+  document.getElementById("explanation").classList.remove("hidden");
+}
+loadQuestion();
+</script>
+
+</body>
+</html>
